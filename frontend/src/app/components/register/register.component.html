@@ -1,0 +1,71 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>Weather App</h1>
+    <h2>Create Account</h2>
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          [ngModel]="username()" (ngModelChange)="username.set($event)"
+          
+          name="username"
+          placeholder="Enter your username"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          [ngModel]="email()" (ngModelChange)="email.set($event)"
+          
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          [ngModel]="password()" (ngModelChange)="password.set($event)"
+          
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)"
+          name="confirmPassword"
+          placeholder="Confirm your password"
+          required
+        />
+      </div>
+
+      <div class="error-message" *ngIf="error()">
+        {{ error() }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+
+    <div class="login-link">
+      <p>Already have an account? <a (click)="goToLogin()">Login here</a></p>
+    </div>
+  </div>
+</div>

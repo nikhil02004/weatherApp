@@ -1,0 +1,42 @@
+.login-container {
+  margin: 20px;
+}
+
+.login-card {
+  padding: 10px;
+  width: 300px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+}
+
+input {
+  width: 100%;
+}
+
+.btn-primary {
+  background: white;
+  padding: 5px 10px;
+}
+
+.register-link {
+  margin-top: 10px;
+}
+
+.register-link a {
+  color: blue;
+  cursor: pointer;
+}
+
+.divider {
+  margin: 10px 0;
+}
+
+.google-btn-wrapper {
+  margin-bottom: 10px;
+}

@@ -1,0 +1,22 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: red;
+  margin: 5px 0;
+}
+
+.success-message {
+  color: green;
+  margin: 5px 0;
+}

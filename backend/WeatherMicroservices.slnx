@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Auth.Service/">
+    <Project Path="Auth.Service/Auth.Service.Application/Auth.Service.Application.csproj" />
+    <Project Path="Auth.Service/Auth.Service.Domain/Auth.Service.Domain.csproj" />
+    <Project Path="Auth.Service/Auth.Service.Infrastructure/Auth.Service.Infrastructure.csproj" />
+    <Project Path="Auth.Service/Auth.Service.Presentation/Auth.Service.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/Weather.Current/">
+    <Project Path="Weather.Current/Weather.Current.Application/Weather.Current.Application.csproj" />
+    <Project Path="Weather.Current/Weather.Current.Domain/Weather.Current.Domain.csproj" />
+    <Project Path="Weather.Current/Weather.Current.Infrastructure/Weather.Current.Infrastructure.csproj" />
+    <Project Path="Weather.Current/Weather.Current.Presentation/Weather.Current.Presentation.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,12 @@
+{
+  "/api/auth": {
+    "target": "http://localhost:5144",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/api/weather": {
+    "target": "http://localhost:5182",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

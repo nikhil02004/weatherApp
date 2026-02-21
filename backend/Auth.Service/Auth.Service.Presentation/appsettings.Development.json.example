@@ -1,0 +1,21 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=WeatherAuthDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  },
+  "Jwt": {
+    "Key": "REPLACE_WITH_A_LONG_RANDOM_SECRET_KEY_MIN_32_CHARS",
+    "Issuer": "WeatherApi",
+    "Audience": "WeatherUsers",
+    "ExpireMinutes": 60
+  },
+  "Google": {
+    "ClientId": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    "ClientSecret": "YOUR_GOOGLE_CLIENT_SECRET"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}

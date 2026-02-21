@@ -1,0 +1,66 @@
+# ===========================
+# Secrets & Environment Files
+# ===========================
+.env
+.env.*
+!.env.example
+
+# ASP.NET Core - never commit Development overrides (contain real secrets)
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+!appsettings.*.json.example
+
+# ===========================
+# .NET / C# Build Artifacts
+# ===========================
+bin/
+obj/
+*.user
+*.suo
+*.vs
+.vs/
+*.userprefs
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# ===================
+# Node / Angular
+# ===================
+node_modules/
+dist/
+/tmp
+/out-tsc
+/bazel-out
+.angular/cache
+.sass-cache/
+npm-debug.log
+yarn-error.log
+
+# ===================
+# SonarQube
+# ===================
+.sonarqube/
+.scannerwork/
+.sonar/
+
+# ===================
+# IDE / Editor
+# ===================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+
+# ===================
+# OS Files
+# ===================
+.DS_Store
+Thumbs.db
+desktop.ini

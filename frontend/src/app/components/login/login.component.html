@@ -1,0 +1,52 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Weather App</h1>
+    <h2>Login</h2>
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          [ngModel]="username()" (ngModelChange)="username.set($event)"
+          
+          name="username"
+          placeholder="Enter your username"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          [ngModel]="password()" (ngModelChange)="password.set($event)"
+          
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <div class="error-message" *ngIf="error()">
+        {{ error() }}
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+
+    <div class="divider"><span>or</span></div>
+
+    <div class="google-btn-wrapper">
+      <asl-google-signin-button type="standard" size="large" [width]="320"></asl-google-signin-button>
+    </div>
+
+    <div class="register-link">
+      <p>Don't have an account? <a (click)="goToRegister()">Register here</a></p>
+    </div>
+  </div>
+</div>

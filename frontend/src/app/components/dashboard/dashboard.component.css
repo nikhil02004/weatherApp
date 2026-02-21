@@ -1,0 +1,72 @@
+.header {
+  padding: 5px;
+}
+
+.header-content {
+  padding: 5px;
+}
+
+.btn-logout {
+  background: white;
+  padding: 3px 8px;
+}
+
+.main-content {
+  margin: 10px;
+}
+
+.search-section {
+  margin-bottom: 10px;
+}
+
+.search-box input {
+  padding: 3px;
+}
+
+.btn-search {
+  background: white;
+  padding: 3px 8px;
+}
+
+.weather-section {
+  margin-bottom: 10px;
+}
+
+.weather-card {
+  padding: 10px;
+}
+
+.temperature {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.weather-details {
+  margin-top: 10px;
+}
+
+.detail-label {
+  font-weight: bold;
+}
+
+.forecast-section {
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.forecast-grid {
+  margin-top: 5px;
+}
+
+.forecast-card {
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.forecast-temp {
+  font-weight: bold;
+}
+
+.error-message {
+  color: red;
+}

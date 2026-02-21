@@ -1,0 +1,18 @@
+{
+  "WeatherApi": {
+    "ApiKey": "YOUR_WEATHERAPI_COM_KEY",
+    "Endpoint": "https://api.weatherapi.com/v1/current.json"
+  },
+  "Jwt": {
+    "Key": "REPLACE_WITH_A_LONG_RANDOM_SECRET_KEY_MIN_32_CHARS",
+    "Issuer": "WeatherApi",
+    "Audience": "WeatherUsers",
+    "ExpireMinutes": 60
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
