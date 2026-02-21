@@ -1,0 +1,52 @@
+# ============================================================
+# SECRETS — Never commit these
+# ============================================================
+# appsettings.Development.json is the .NET equivalent of .env.
+# Real API keys / connection strings / JWT secrets live here.
+# Copy appsettings.Development.json.example → appsettings.Development.json
+# and fill in your real values locally.
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# .NET Build Artifacts
+# ============================================================
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish output
+publish/
+
+# ============================================================
+# SonarQube
+# ============================================================
+.sonarqube/
+.scannerwork/
+.sonar/
+
+# ============================================================
+# OS Files
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
