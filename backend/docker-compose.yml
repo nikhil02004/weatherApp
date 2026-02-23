@@ -1,0 +1,85 @@
+services:
+
+  # ──────────────────────────────────────────────
+  # SQL Server 2022  →  localhost:1433
+  # ──────────────────────────────────────────────
+  sqlserver:
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      SA_PASSWORD: "${SA_PASSWORD}"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SA_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - weather-net
+
+  # ──────────────────────────────────────────────
+  # Auth Microservice  →  http://localhost:5144
+  # ──────────────────────────────────────────────
+  auth-service:
+    build:
+      context: ./Auth.Service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "5144:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Database – uses SA credentials; Trusted_Connection not supported in Linux containers
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=WeatherAuthDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      # JWT (must match across services)
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "WeatherApi"
+      Jwt__Audience: "WeatherUsers"
+      Jwt__ExpireMinutes: "60"
+      # Google OAuth
+      Google__ClientId: "${GOOGLE_CLIENT_ID}"
+      Google__ClientSecret: "${GOOGLE_CLIENT_SECRET}"
+      # Application Insights (optional)
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - weather-net
+
+  # ──────────────────────────────────────────────
+  # Weather Current Microservice  →  http://localhost:5182
+  # ──────────────────────────────────────────────
+  weather-current:
+    build:
+      context: ./Weather.Current
+      dockerfile: Dockerfile
+    container_name: weather-current
+    ports:
+      - "5182:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # WeatherAPI.com
+      WeatherApi__ApiKey: "${WEATHER_API_KEY}"
+      WeatherApi__Endpoint: "https://api.weatherapi.com/v1/current.json"
+      # JWT (must match auth-service)
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "WeatherApi"
+      Jwt__Audience: "WeatherUsers"
+      Jwt__ExpireMinutes: "60"
+      # Application Insights (optional)
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
+    restart: unless-stopped
+    networks:
+      - weather-net
+
+networks:
+  weather-net:
+    driver: bridge

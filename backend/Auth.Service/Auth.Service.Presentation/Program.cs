@@ -75,7 +75,10 @@ try
     // Logs all HTTP requests (method, path, status code, duration)
     app.UseSerilogRequestLogging();
 
-    app.UseHttpsRedirection();
+    // Disabled in Production/Docker: container only listens on HTTP (port 8080)
+    if (app.Environment.IsDevelopment())
+        app.UseHttpsRedirection();
+
     app.UseCors("AllowAngular");
     app.UseAuthentication();
     app.UseAuthorization();
