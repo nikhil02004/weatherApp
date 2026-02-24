@@ -72,12 +72,6 @@ pipeline {
                     '''
                 }
             }
-            post {
-                always {
-                    // Publish MSTest/TRX results
-                    step([$class: 'MSTestPublisher', testResultsFile: 'backend/**/TestResults.trx', failOnError: false])
-                }
-            }
         }
 
         // ─────────────────────────────────────────────────────────────────
