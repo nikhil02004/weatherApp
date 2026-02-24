@@ -41,7 +41,7 @@ pipeline {
         stage('Backend – Restore') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh 'dotnet restore WeatherMicroservices.slnx'
+                    bat 'dotnet restore WeatherMicroservices.slnx'
                 }
             }
         }
@@ -49,7 +49,7 @@ pipeline {
         stage('Backend – Build') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh 'dotnet build WeatherMicroservices.slnx --no-restore --configuration Release'
+                    bat 'dotnet build WeatherMicroservices.slnx --no-restore --configuration Release'
                 }
             }
         }
@@ -61,14 +61,14 @@ pipeline {
         stage('Backend – Test') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh '''
-                        dotnet test WeatherMicroservices.slnx \
-                            --no-build \
-                            --configuration Release \
-                            --logger "trx;LogFileName=TestResults.trx" \
-                            --collect:"XPlat Code Coverage" \
-                            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover \
-                            || true
+                    powershell '''
+                        dotnet test WeatherMicroservices.slnx `
+                            --no-build `
+                            --configuration Release `
+                            --logger "trx;LogFileName=TestResults.trx" `
+                            --collect:"XPlat Code Coverage" `
+                            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+                        exit 0
                     '''
                 }
             }
@@ -89,18 +89,10 @@ pipeline {
             steps {
                 withSonarQubeEnv("${SONAR_SERVER}") {
                     dir("${BACKEND_DIR}") {
-                        sh """
-                            dotnet sonarscanner begin \
-                                /k:"${SONAR_BACKEND_KEY}" \
-                                /n:"WeatherApi Backend" \
-                                /d:sonar.host.url="${SONAR_HOST_URL}" \
-                                /d:sonar.token="${SONAR_AUTH_TOKEN}" \
-                                /d:sonar.cs.opencover.reportsPaths="**/**/coverage.opencover.xml"
-
+                        bat """
+                            dotnet sonarscanner begin /k:"${SONAR_BACKEND_KEY}" /n:"WeatherApi Backend" /d:sonar.host.url="${SONAR_HOST_URL}" /d:sonar.token="${SONAR_AUTH_TOKEN}" /d:sonar.cs.opencover.reportsPaths="**/**/coverage.opencover.xml"
                             dotnet build WeatherMicroservices.slnx --configuration Release --no-restore
-
-                            dotnet sonarscanner end \
-                                /d:sonar.token="${SONAR_AUTH_TOKEN}"
+                            dotnet sonarscanner end /d:sonar.token="${SONAR_AUTH_TOKEN}"
                         """
                     }
                 }
@@ -113,7 +105,7 @@ pipeline {
         stage('Frontend – Install') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'npm ci'
+                    bat 'npm ci'
                 }
             }
         }
@@ -121,7 +113,7 @@ pipeline {
         stage('Frontend – Build') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh 'npm run build -- --configuration production'
+                    bat 'npm run build -- --configuration production'
                 }
             }
         }
@@ -132,12 +124,9 @@ pipeline {
         stage('Frontend – Test') {
             steps {
                 dir("${FRONTEND_DIR}") {
-                    sh '''
-                        npx ng test \
-                            --watch=false \
-                            --browsers=ChromeHeadless \
-                            --code-coverage \
-                            || true
+                    powershell '''
+                        npx ng test --watch=false --browsers=ChromeHeadless --code-coverage
+                        exit 0
                     '''
                 }
             }
@@ -157,16 +146,8 @@ pipeline {
             steps {
                 withSonarQubeEnv("${SONAR_SERVER}") {
                     dir("${FRONTEND_DIR}") {
-                        sh """
-                            sonar-scanner \
-                                -Dsonar.projectKey=${SONAR_FRONTEND_KEY} \
-                                -Dsonar.projectName="WeatherApi Frontend" \
-                                -Dsonar.sources=src \
-                                -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.angular/**,**/*.spec.ts" \
-                                -Dsonar.tests=src \
-                                -Dsonar.test.inclusions="**/*.spec.ts" \
-                                -Dsonar.host.url="${SONAR_HOST_URL}" \
-                                -Dsonar.token="${SONAR_AUTH_TOKEN}"
+                        bat """
+                            sonar-scanner -Dsonar.projectKey=${SONAR_FRONTEND_KEY} -Dsonar.projectName="WeatherApi Frontend" -Dsonar.sources=src -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.angular/**,**/*.spec.ts" -Dsonar.tests=src -Dsonar.test.inclusions="**/*.spec.ts" -Dsonar.host.url="${SONAR_HOST_URL}" -Dsonar.token="${SONAR_AUTH_TOKEN}"
                         """
                     }
                 }
@@ -199,7 +180,7 @@ pipeline {
             }
             steps {
                 dir("${BACKEND_DIR}") {
-                    sh 'docker compose build'
+                    bat 'docker compose build'
                 }
             }
         }
@@ -230,7 +211,7 @@ pipeline {
                     string(credentialsId: 'WEATHER_API_KEY',       variable: 'WEATHER_API_KEY')
                 ]) {
                     dir("${BACKEND_DIR}") {
-                        sh '''
+                        bat '''
                             docker compose down --remove-orphans
                             docker compose up -d --build
                         '''
