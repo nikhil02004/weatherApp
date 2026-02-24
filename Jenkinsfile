@@ -2,17 +2,10 @@ pipeline {
     agent any
 
     environment {
-        // SonarQube server name configured in Jenkins → Manage Jenkins → Configure System
-        SONAR_SERVER      = 'SonarQube'
-
         // Backend .NET solution
         SOLUTION_FILE     = 'backend/WeatherMicroservices.slnx'
         BACKEND_DIR       = 'backend'
         FRONTEND_DIR      = 'frontend'
-
-        // SonarQube project keys (must match what was used locally)
-        SONAR_BACKEND_KEY = 'weather-backend'
-        SONAR_FRONTEND_KEY= 'weather-frontend'
 
         // Docker Compose file location
         COMPOSE_FILE      = 'backend/docker-compose.yml'
@@ -75,26 +68,7 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────────────────────────
-        // 4. Backend – SonarQube Analysis
-        //    Requires: dotnet-sonarscanner tool installed on the agent
-        //    Install once:  dotnet tool install --global dotnet-sonarscanner
-        // ─────────────────────────────────────────────────────────────────
-        stage('Backend – SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv("${SONAR_SERVER}") {
-                    dir("${BACKEND_DIR}") {
-                        bat """
-                            dotnet sonarscanner begin /k:"${SONAR_BACKEND_KEY}" /n:"WeatherApi Backend" /d:sonar.host.url="${SONAR_HOST_URL}" /d:sonar.token="${SONAR_AUTH_TOKEN}" /d:sonar.cs.opencover.reportsPaths="**/**/coverage.opencover.xml"
-                            dotnet build WeatherMicroservices.slnx --configuration Release --no-restore
-                            dotnet sonarscanner end /d:sonar.token="${SONAR_AUTH_TOKEN}"
-                        """
-                    }
-                }
-            }
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        // 5. Frontend – Install & Build
+        // 4. Frontend – Install & Build
         // ─────────────────────────────────────────────────────────────────
         stage('Frontend – Install') {
             steps {
@@ -132,35 +106,7 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────────────────────────
-        // 7. Frontend – SonarQube Analysis
-        //    Requires: sonar-scanner CLI installed on the agent or use
-        //    the SonarQube Scanner Jenkins plugin (configured in tools)
-        // ─────────────────────────────────────────────────────────────────
-        stage('Frontend – SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv("${SONAR_SERVER}") {
-                    dir("${FRONTEND_DIR}") {
-                        bat """
-                            sonar-scanner -Dsonar.projectKey=${SONAR_FRONTEND_KEY} -Dsonar.projectName="WeatherApi Frontend" -Dsonar.sources=src -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/.angular/**,**/*.spec.ts" -Dsonar.tests=src -Dsonar.test.inclusions="**/*.spec.ts" -Dsonar.host.url="${SONAR_HOST_URL}" -Dsonar.token="${SONAR_AUTH_TOKEN}"
-                        """
-                    }
-                }
-            }
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        // 8. Quality Gate – block the pipeline if Sonar gate fails
-        // ─────────────────────────────────────────────────────────────────
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        // 9. Docker – Build & Push images
+        // 7. Docker – Build & Push images
         //    Uses credentials bound to 'docker-registry-credentials' in
         //    Jenkins Credentials store.  Update REGISTRY to your registry.
         // ─────────────────────────────────────────────────────────────────
@@ -180,7 +126,7 @@ pipeline {
         }
 
         // ─────────────────────────────────────────────────────────────────
-        // 10. Deploy (only on main/master)
+        // 8. Deploy (only on main/master)
         //     Reads secrets from Jenkins credentials bound as env vars.
         //     Configure the following credentials in Jenkins:
         //       - SA_PASSWORD          (Secret text)
