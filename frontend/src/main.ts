@@ -5,6 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { authInterceptor } from './app/interceptors/auth.interceptor';
 import { SOCIAL_AUTH_CONFIG, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { environment } from './environments/environment';
 
 try {
   await bootstrapApplication(AppComponent, {
@@ -19,7 +20,7 @@ try {
             {
               id: GoogleLoginProvider.PROVIDER_ID,
               provider: new GoogleLoginProvider(
-                '371391155525-lv8ismho1cvq43vddljba6r23ilktv2q.apps.googleusercontent.com',
+                environment.googleClientId,
                 { oneTapEnabled: false }
               )
             }

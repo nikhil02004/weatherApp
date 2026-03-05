@@ -1,12 +1,13 @@
 using Auth.Service.Application.Interfaces;
 using Auth.Service.Application.Mappings;
 using Auth.Service.Application.Validators;
+using Auth.Service.Infrastructure.Data;
 using Auth.Service.Infrastructure.Repositories;
 using Auth.Service.Infrastructure.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
@@ -23,21 +24,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Azure Application Insights
-    // Connection string is read from:
-    //   - Azure App Service: set APPLICATIONINSIGHTS_CONNECTION_STRING in App Settings
-    //   - Local: set ApplicationInsights:ConnectionString in appsettings.json
-    builder.Services.AddApplicationInsightsTelemetry();
-
-    // Serilog: Console (always) + Application Insights (when connection string is present)
+    // Serilog
     builder.Host.UseSerilog((context, services, config) => config
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
-        .WriteTo.Console()
-        .WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(),
-            TelemetryConverter.Traces));
+        .WriteTo.Console());
 
     builder.Services.AddControllers();
     builder.Services.AddCors(options =>
@@ -46,9 +38,15 @@ try
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
+    // EF Core – SQL Server
+    builder.Services.AddDbContext<AuthDbContext>(options =>
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection")));
+
     // Onion DI: bind interfaces to implementations
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddSingleton<ITokenService, TokenService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
 
     builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AuthMappingProfile>());
 

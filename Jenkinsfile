@@ -80,8 +80,16 @@ pipeline {
 
         stage('Frontend – Build') {
             steps {
-                dir("${FRONTEND_DIR}") {
-                    bat 'npm run build -- --configuration production'
+                withCredentials([
+                    string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID')
+                ]) {
+                    dir("${FRONTEND_DIR}") {
+                        // Generate environment.ts from the Jenkins credential (file is gitignored)
+                        bat """
+                            echo export const environment = { googleClientId: '%GOOGLE_CLIENT_ID%' }; > src\\environments\\environment.ts
+                        """
+                        bat 'npm run build -- --configuration production'
+                    }
                 }
             }
         }

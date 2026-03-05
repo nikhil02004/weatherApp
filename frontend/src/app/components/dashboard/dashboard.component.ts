@@ -84,7 +84,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Failed to load weather data');
+        if (err.error?.errors && Array.isArray(err.error.errors)) {
+          this.error.set(err.error.errors.join(' '));
+        } else {
+          this.error.set(err.error?.message || 'Failed to load weather data');
+        }
       }
     });
   }

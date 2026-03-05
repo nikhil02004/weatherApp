@@ -1,6 +1,5 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -9,6 +8,7 @@ using System.Text;
 using Weather.Current.Application.Interfaces;
 using Weather.Current.Application.Mappings;
 using Weather.Current.Application.Validators;
+using Weather.Current.Infrastructure.Repositories;
 using Weather.Current.Infrastructure.Services;
 
 // Bootstrap logger active before host builds (catches startup failures)
@@ -22,21 +22,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Azure Application Insights
-    // Connection string is read from:
-    //   - Azure App Service: set APPLICATIONINSIGHTS_CONNECTION_STRING in App Settings
-    //   - Local: set ApplicationInsights:ConnectionString in appsettings.json
-    builder.Services.AddApplicationInsightsTelemetry();
-
-    // Serilog: Console (always) + Application Insights (when connection string is present)
+    // Serilog
     builder.Host.UseSerilog((context, services, config) => config
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
-        .WriteTo.Console()
-        .WriteTo.ApplicationInsights(
-            services.GetRequiredService<TelemetryConfiguration>(),
-            TelemetryConverter.Traces));
+        .WriteTo.Console());
 
     builder.Services.AddControllers();
     builder.Services.AddCors(options =>
@@ -45,8 +36,20 @@ try
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
-    // Onion DI: bind interface to implementation
-    builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+    // Redis distributed cache
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration["Redis:ConnectionString"];
+        options.InstanceName = "WeatherCache:";
+    });
+
+    // Onion DI:
+    //   WeatherRepository  – typed HttpClient, satisfies IWeatherRepository
+    //   WeatherService     – calls repository, maps via AutoMapper
+    //   CachedWeatherService – Redis decorator, registered as IWeatherService
+    builder.Services.AddHttpClient<IWeatherRepository, WeatherRepository>();
+    builder.Services.AddScoped<WeatherService>();
+    builder.Services.AddScoped<IWeatherService, CachedWeatherService>();
 
     builder.Services.AddAutoMapper(cfg => cfg.AddProfile<WeatherMappingProfile>());
 

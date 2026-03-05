@@ -6,8 +6,10 @@
 .env
 .env.*
 !.env.example
-
-# ============================================================
+# Angular environment file – holds the real Google Client ID.
+# Copy src/environments/environment.example.ts → environment.ts and fill in values.
+src/environments/environment.ts
+!src/environments/environment.example.ts# ============================================================
 # Angular / Node Build Artifacts
 # ============================================================
 /dist

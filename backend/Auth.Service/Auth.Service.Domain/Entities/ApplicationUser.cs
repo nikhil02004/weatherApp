@@ -8,4 +8,5 @@ public class ApplicationUser
     public string? Email { get; set; }
     public string? ExternalProvider { get; set; }
     public string? ExternalId { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
