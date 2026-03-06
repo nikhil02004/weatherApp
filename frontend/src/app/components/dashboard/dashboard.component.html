@@ -46,6 +46,10 @@
             <span class="detail-label">Wind Speed</span>
             <span class="detail-value">{{ weatherData()!.currentWindSpeed }} km/h</span>
           </div>
+          <div class="detail-item" *ngIf="weatherData()!.currentTime !== undefined">
+            <span class="detail-label">Last Updated</span>
+            <span class="detail-value">{{ weatherData()!.currentTime | date:'short' }}</span>
+          </div>
           <div class="detail-item">
             <span class="detail-label">Coordinates</span>
             <span class="detail-value">{{ weatherData()!.latitude }}, {{ weatherData()!.longitude }}</span>
